@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="WinEnvEditor.Views.EnvSetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+             xmlns:v="clr-namespace:WinEnvEditor.Views"
+             xmlns:vm="clr-namespace:WinEnvEditor.ViewModels"
+             xmlns:p="clr-namespace:WinEnvEditor.Properties"
+             Height="350" Width="525">
+
+    <UserControl.DataContext>
+        <vm:EnvSetControlViewModel/>
+    </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <p:Settings x:Key="UserSettings"/>
+        <v:DatabindingDebugConverter x:Key="degubConverter"/>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="3">
+            <Label Content="現在の環境セット"/>
+            <ComboBox ItemsSource="{Binding EnvSetList.NameList, Mode=OneWay}"
+                      SelectedIndex="{Binding EnvSetList.CurrentSetIndex}"/>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Margin="3">
+            <Label Content="反映先"/>
+            <ComboBox ItemsSource="{Binding TargetList}"
+                      SelectedIndex="{Binding CurrentTargetIndex}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Label Content="反映オプション" Margin="5,0,0,0"/>
+            <ComboBox ItemsSource="{Binding OptionList}"
+                      SelectedIndex="{Binding CurrentOptionIndex}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Label Content="反映方法" Margin="5,0,0,0"/>
+            <ComboBox ItemsSource="{Binding ModeList}"
+                      SelectedIndex="{Binding CurrentModeIndex}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Content="変更を反映する" Margin="5,0,0,0" HorizontalAlignment="Left">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                 MethodName="ApplyEnvSet"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding CurrentSet}"
+                  AutoGenerateColumns="False" CanUserDeleteRows="False"
+                  Margin="3">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="キー" Binding="{Binding Key}"
+                                    CanUserSort="True" CanUserResize="False"
+                                    Width="3*"/>
+                <DataGridTextColumn Header="値" Binding="{Binding Value}"
+                                    CanUserSort="True" CanUserResize="False"
+                                    Width="7*"/>
+            </DataGrid.Columns>
+            
+        </DataGrid>
+    </StackPanel>
+</UserControl>

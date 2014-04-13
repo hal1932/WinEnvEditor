@@ -1,0 +1,111 @@
+﻿<Window x:Class="WinEnvEditor.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+        xmlns:v="clr-namespace:WinEnvEditor.Views"
+        xmlns:vm="clr-namespace:WinEnvEditor.ViewModels"
+        Title="Windows環境変数エディタ" Height="600" Width="800">
+    
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <v:DatabindingDebugConverter x:Key="debugConverter" />
+    </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <!-- EnvSetControl#Loaded より前に初期化したいから Loaded で Initialize -->
+        <i:EventTrigger EventName="Loaded">
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <l:DataContextDisposeAction/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Margin="3" Background="White">
+            <MenuItem Header="ファイル">
+                <MenuItem Header="環境セット">
+                    <MenuItem Header="インポート">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                         MethodName="ImportSet"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </MenuItem>
+                    <MenuItem Header="エクスポート">
+                        <MenuItem Header="設定ファイル">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                             MethodName="ExportSetConfig"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem Header="バッチファイル">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                             MethodName="ExportSetBatch"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="環境セットリスト">
+                    <MenuItem Header="インポート">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                         MethodName="ImportSetList"
+                                                         MethodParameter=""/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                    </MenuItem>
+                    <MenuItem Header="エクスポート">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                         MethodName="ExportSetList"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                    </MenuItem>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="外部ツール">
+                <MenuItem Header="システムのプロパティ">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                     MethodName="OpenSystemPropertyWindow"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </MenuItem>
+                <MenuItem Header="レジストリエディタ">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <l:LivetCallMethodAction MethodTarget="{Binding}"
+                                                     MethodName="OpenRegistryEditor"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <TabControl SelectedIndex="{Binding CurrentTabIndex}">
+            <TabItem Header="環境セット">
+                <v:EnvSetControl Width="Auto" Height="Auto"/>
+            </TabItem>
+            <TabItem Header="現在の環境変数">
+                <v:EnvEditorControl Width="Auto" Height="Auto"/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
